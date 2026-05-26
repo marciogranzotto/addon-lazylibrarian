@@ -1,0 +1,15 @@
+name: Update addons repository
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+
+jobs:
+  update-main-repo:
+    name: Update addons repository
+    runs-on: ubuntu-latest
+    container:
+      image: hassioaddons/repository-updater:latest
+    steps:
+      - name: upload
+        run: repository-updater --token ${{ secrets.GIT_TOKEN }} --repository marciogranzotto/addons-repository --addon lazylibrarian

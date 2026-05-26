@@ -1,0 +1,29 @@
+{
+  "name": "LazyLibrarian",
+  "version": "dev",
+  "slug": "lazylibrarian",
+  "description": "Automated ebook and audiobook collection manager (Readarr alternative)",
+  "url": "https://github.com/marciogranzotto/addon-lazylibrarian",
+  "arch": ["aarch64", "amd64"],
+  "startup": "services",
+  "init": false,
+  "boot": "auto",
+  "image": "marciogranzotto/image-{arch}-addon-lazylibrarian",
+  "ingress": true,
+  "ingress_port": 0,
+  "ingress_entry": "lazylibrarian",
+  "panel_icon": "mdi:book-open-page-variant",
+  "panel_title": "LazyLibrarian",
+  "hassio_role": "default",
+  "map": ["config:rw", "share:rw", "media:rw", "ssl"],
+  "options": {
+    "PUID": 0,
+    "PGID": 0,
+    "TZ": "America/Sao_Paulo"
+  },
+  "schema": {
+    "PUID": "int?",
+    "PGID": "int?",
+    "TZ": "str?"
+  }
+}

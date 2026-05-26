@@ -1,0 +1,54 @@
+name: Docker build and publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-amd64:
+    name: Build and publish amd64 image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get version
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: echo "VERSION=${TAG_NAME#v}" >> $GITHUB_ENV
+      - name: Patch files
+        uses: onlyutkarsh/patch-files-action@v1.0.5
+        with:
+          files: |
+            lazylibrarian/config.json
+          patch-syntax: |
+            = /version => "${{ env.VERSION }}"
+      - name: publish amd64 docker files
+        run: docker run --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v ~/.docker:/root/.docker -v "$(pwd)":/data homeassistant/amd64-builder -t lazylibrarian --amd64 --release-tag --docker-user marciogranzotto --docker-password ${{ secrets.DOCKER_PASSWORD }}
+
+  build-aarch64:
+    name: Build and publish aarch64 image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get version
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: echo "VERSION=${TAG_NAME#v}" >> $GITHUB_ENV
+      - name: Patch files
+        uses: onlyutkarsh/patch-files-action@v1.0.5
+        with:
+          files: |
+            lazylibrarian/config.json
+          patch-syntax: |
+            = /version => "${{ env.VERSION }}"
+      - name: publish aarch64 docker files
+        run: docker run --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v ~/.docker:/root/.docker -v "$(pwd)":/data homeassistant/amd64-builder -t lazylibrarian --aarch64 --release-tag --docker-user marciogranzotto --docker-password ${{ secrets.DOCKER_PASSWORD }}
+
+  update-main-repo:
+    needs: [build-amd64, build-aarch64]
+    name: Update addons repository
+    runs-on: ubuntu-latest
+    container:
+      image: hassioaddons/repository-updater:latest
+    steps:
+      - name: upload
+        run: repository-updater --token ${{ secrets.GIT_TOKEN }} --repository marciogranzotto/addons-repository --addon lazylibrarian

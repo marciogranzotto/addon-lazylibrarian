@@ -1,0 +1,4 @@
+#!/usr/bin/with-contenv bashio
+# Stop the add-on if nginx exits.
+bashio::log.warning "nginx exited, stopping add-on"
+/run/s6/basedir/bin/halt
