@@ -5,8 +5,11 @@ FROM $BUILD_FROM
 ENV LANG=C.UTF-8
 
 ARG BASHIO_VERSION=0.16.2
-# hadolint ignore=DL3018,DL3003
-RUN apk add --no-cache nginx jq bash curl tzdata \
+# hadolint ignore=DL3008,DL3003
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        nginx jq bash curl tzdata ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
     && curl -L -o /tmp/bashio.tar.gz "https://github.com/hassio-addons/bashio/archive/v${BASHIO_VERSION}.tar.gz" \
     && tar -xzf /tmp/bashio.tar.gz -C /tmp \
     && mv "/tmp/bashio-${BASHIO_VERSION}/lib" /usr/lib/bashio \
