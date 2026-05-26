@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Patch files
-        uses: onlyutkarsh/patch-files-action@v1.0.5
+        uses: onlyutkarsh/patch-files-action@v1.0.7
         with:
           files: |
             lazylibrarian/config.json
@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Patch files
-        uses: onlyutkarsh/patch-files-action@v1.0.5
+        uses: onlyutkarsh/patch-files-action@v1.0.7
         with:
           files: |
             lazylibrarian/config.json
