@@ -15,7 +15,7 @@
   "panel_icon": "mdi:book-open-page-variant",
   "panel_title": "LazyLibrarian",
   "hassio_role": "default",
-  "map": ["config:rw", "share:rw", "media:rw", "ssl"],
+  "map": ["addon_config:rw", "share:rw", "media:rw", "ssl"],
   "options": {
     "PUID": 0,
     "PGID": 0,
