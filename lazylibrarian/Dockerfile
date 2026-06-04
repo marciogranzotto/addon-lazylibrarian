@@ -16,6 +16,25 @@ RUN apt-get update \
     && ln -s /usr/lib/bashio/bashio /usr/bin/bashio \
     && rm -rf /tmp/bashio*
 
+# Calibre CLI (calibredb / ebook-convert / ebook-meta) so LazyLibrarian can import
+# finished books into a Calibre library and convert/inspect formats. The library's
+# metadata.db must be maintained by calibredb, not by dropping files in. Pull a few
+# Qt runtime libs explicitly and run headless via QT_QPA_PLATFORM=offscreen.
+# hadolint ignore=DL3008
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        calibre \
+        libxcb-cursor0 libxkbcommon0 libegl1 libopengl0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Run headless (QT_QPA_PLATFORM) and pin the LinuxServer abc user to uid/gid 1000
+# so LazyLibrarian can write shared paths owned by 1000 — the Calibre library
+# (/media/.../Calibre Library) and the Transmission download dir on /share — and
+# stays consistent with the other add-ons on this host.
+ENV QT_QPA_PLATFORM=offscreen \
+    PUID=1000 \
+    PGID=1000
+
 COPY rootfs/ /
 
 ARG BUILD_ARCH
