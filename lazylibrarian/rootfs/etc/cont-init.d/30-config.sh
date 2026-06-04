@@ -37,12 +37,13 @@ with open(p, 'w') as f:
     cfg.write(f, space_around_delimiters=True)
 PY
 
-# Render the nginx ingress template with HA's assigned port/interface.
+# Render the nginx ingress template with HA's assigned port/interface. The
+# ingress prefix itself is handled dynamically at request time via the
+# X-Ingress-Path header (see servers/ingress.conf), so we only need to pin the
+# listen address here.
 INGRESS_PORT=$(bashio::addon.ingress_port)
 INGRESS_INTERFACE=$(bashio::addon.ip_address)
-INGRESS_ENTRY=$(bashio::addon.ingress_entry)
 
-bashio::log.info "Ingress: ${INGRESS_INTERFACE}:${INGRESS_PORT} entry=${INGRESS_ENTRY}"
+bashio::log.info "Ingress listening on ${INGRESS_INTERFACE}:${INGRESS_PORT}"
 sed -i "s|%%port%%|${INGRESS_PORT}|g" /etc/nginx/servers/ingress.conf
 sed -i "s|%%interface%%|${INGRESS_INTERFACE}|g" /etc/nginx/servers/ingress.conf
-sed -i "s|%%ingress_entry%%|${INGRESS_ENTRY}|g" /etc/nginx/servers/ingress.conf
